@@ -12,6 +12,7 @@ urlpatterns = [
     path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
 ]
 
+
 urlpatterns = [
     # Built-in login and logout views
     path('login/', auth_views.LoginView.as_view(template_name='relationship_app/login.html'), name='login'),
@@ -19,4 +20,11 @@ urlpatterns = [
     
     # Custom registration view
     path('register/', views.register, name='register'),
+]
+
+
+urlpatterns = [
+    path('admin/', views.admin_view, name='admin_view'),
+    path('librarian/', views.librarian_view, name='librarian_view'),
+    path('member/', views.member_view, name='member_view'),
 ]
