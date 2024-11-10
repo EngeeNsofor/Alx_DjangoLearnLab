@@ -7,9 +7,9 @@ from django.contrib.auth import views as auth_views  # Import built-in views
 urlpatterns = [
     # URL pattern for the function-based view to list all books
     path('books/', list_books, name='list_books'),
-    path('book/add/', views.add_book, name='add_book'),
-    path('book/<int:pk>/edit/', views.edit_book, name='edit_book'),
-    path('book/<int:pk>/delete/', views.delete_book, name='delete_book'),
+    path('book/add_book/', views.add_book, name='add_book'),
+    path('book/<int:pk>/edit_book/', views.edit_book, name='edit_book'),
+    path('book/<int:pk>/delete_book/', views.delete_book, name='delete_book'),
 
     # URL pattern for the class-based view to show library details
     path('library/<int:pk>/', LibraryDetailView.as_view(), name='library_detail'),
