@@ -159,3 +159,13 @@ CSP_IMG_SRC = ("'self'", "data:")
 MIDDLEWARE += [
     'csp.middleware.CSPMiddleware',
 ]
+
+
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # Enforce HTTPS for one year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS policy to all subdomains
+SECURE_HSTS_PRELOAD = True  # Allow the domain to be preloaded into browsers' HSTS lists
+
