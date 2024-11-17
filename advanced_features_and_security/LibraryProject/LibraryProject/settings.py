@@ -126,3 +126,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+
+# Turn off DEBUG in production
+DEBUG = False
+
+# Allowed hosts should list the domains that the application serves
+ALLOWED_HOSTS = ['yourdomain.com', '127.0.0.1']  # Update 'yourdomain.com' appropriately.
+
+# Security middleware settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# CSRF and Session cookie settings
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+
+# Secure referrer policy
+SECURE_REFERRER_POLICY = "same-origin"
+
+# Add Content Security Policy (CSP) if django-csp is installed
+INSTALLED_APPS += ['csp']
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+CSP_IMG_SRC = ("'self'", "data:")
+
+
+MIDDLEWARE += [
+    'csp.middleware.CSPMiddleware',
+]

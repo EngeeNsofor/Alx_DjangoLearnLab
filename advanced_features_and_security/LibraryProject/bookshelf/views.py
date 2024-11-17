@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from .models import Book
+from .forms import BookSearchForm
 
 
 @permission_required('bookshelf.can_view', raise_exception=True)
@@ -10,6 +11,7 @@ def book_list(request):
     View to display a list of all books.
     Requires the user to have the 'can_view' permission.
     """
+    
     books = Book.objects.all()
     return render(request, 'bookshelf/book_list.html', {'books': books})
 
@@ -50,3 +52,19 @@ def delete_book(request, book_id):
         book.delete()
         return HttpResponse("Book deleted successfully!")
     return render(request, 'bookshelf/delete_book.html', {'book': book})
+
+
+
+def book_list(request):
+    """
+    View to list books. Handles user inputs safely to avoid SQL injection.
+    """
+    form = BookSearchForm(request.GET or None)  # Use a form to validate input
+    books = Book.objects.all()
+
+    if form.is_valid():  # Validate and sanitize input
+        query = form.cleaned_data.get('search')
+        if query:
+            books = books.filter(title__icontains=query)  # Safe filtering
+
+    return render(request, 'bookshelf/book_list.html', {'books': books, 'form': form})
