@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from .models import Book
 from .forms import BookSearchForm
+from .forms import ExampleForm
 
 
 @permission_required('bookshelf.can_view', raise_exception=True)
@@ -68,3 +69,23 @@ def book_list(request):
             books = books.filter(title__icontains=query)  # Safe filtering
 
     return render(request, 'bookshelf/book_list.html', {'books': books, 'form': form})
+
+
+def example_form_view(request):
+    """
+    View to handle the ExampleForm submission.
+    """
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            cleaned_data = form.cleaned_data
+            name = cleaned_data.get('name')
+            email = cleaned_data.get('email')
+            message = cleaned_data.get('message')
+            # Add processing logic here (e.g., save to database, send email, etc.)
+            return render(request, 'bookshelf/form_success.html', {'name': name})
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
