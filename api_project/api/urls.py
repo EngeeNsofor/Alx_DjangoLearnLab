@@ -1,6 +1,5 @@
-from django.urls import path, include
+from django.urls import path
 from .views import BookList
-from django.contrib import admin
 
 urlpatterns = [
     path('books/', BookList.as_view(), name='book-list'),  
