@@ -2,6 +2,7 @@ from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -21,3 +22,4 @@ class BookViewSet(viewsets.ModelViewSet):
     """
     queryset = Book.objects.all()  # Define the data to be managed
     serializer_class = BookSerializer  # Use the serializer to define data format
+    permission_classes = [IsAuthenticated]
