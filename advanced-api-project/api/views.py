@@ -5,6 +5,8 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from .models import Book
 from .serializers import BookSerializer
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
 
@@ -13,6 +15,19 @@ class BookListView(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [AllowAny]  # Read-only access for unauthenticated users
+
+    # Enable filtering, searching, and ordering
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+
+    # Define filterable fields
+    filterset_fields = ['title', 'author__name', 'publication_year']
+
+    # Define searchable fields
+    search_fields = ['title', 'author__name']
+
+    # Define ordering fields
+    ordering_fields = ['title', 'publication_year']
+
 
 # Retrieve a single book by ID
 class BookDetailView(RetrieveAPIView):
@@ -55,3 +70,4 @@ class BookCreateView(CreateAPIView):
         if serializer.validated_data['publication_year'] > datetime.date.today().year:
             raise ValidationError("Publication year cannot be in the future.")
         serializer.save()
+
