@@ -2,7 +2,7 @@ from datetime import datetime
 from django.shortcuts import render
 from nbformat import ValidationError
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from .models import Book
 from .serializers import BookSerializer
 
@@ -24,7 +24,7 @@ class BookDetailView(RetrieveAPIView):
 class BookCreateView(CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthenticated]  # Only authenticated users can create
+    permission_classes = [IsAuthenticatedOrReadOnly]  # Only authenticated users can create and Read-only for unauthenticated users
 
     def perform_create(self, serializer):
         # Example of custom validation: publication_year cannot be in the future
