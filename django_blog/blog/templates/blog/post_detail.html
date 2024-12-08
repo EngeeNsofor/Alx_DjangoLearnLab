@@ -9,3 +9,37 @@
   <a href="{% url 'post_delete' pk=post.pk %}">Delete Post</a>
   <a href="{% url 'post_list' %}">Back to Posts</a>
 {% endblock %}
+
+
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>{{ post.content }}</p>
+
+<h2>Comments</h2>
+<div>
+    {% for comment in comments %}
+        <div>
+            <strong>{{ comment.author.username }}</strong> ({{ comment.created_at }})
+            <p>{{ comment.content }}</p>
+            {% if comment.author == user %}
+                <a href="{% url 'comment_edit' comment.id %}">Edit</a>
+                <a href="{% url 'comment_delete' comment.id %}">Delete</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+    {% endfor %}
+</div>
+
+<h3>Add a Comment</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Comment</button>
+</form>
+
+{% endblock %}
