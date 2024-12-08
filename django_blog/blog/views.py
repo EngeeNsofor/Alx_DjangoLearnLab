@@ -5,11 +5,12 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
-from .forms import UserForm, ProfileForm, CommentForm
-from .models import Profile
+from .forms import UserForm, ProfileForm, CommentForm, PostForm
+from .models import Profile, Tag
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Comment
+from django.db.models import Q
 
 
 # Create your views here.
@@ -74,6 +75,7 @@ class PostDetailView(DetailView):
 # Create a new post (authenticated users only)
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
+    form_class = PostForm
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
     success_url = reverse_lazy('post_list')
@@ -85,6 +87,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 # Update a post (only for the post author)
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
+    form_class = PostForm
     fields = ['title', 'content']
     template_name = 'blog/post_form.html'
     context_object_name = 'post'
@@ -173,3 +176,22 @@ class CommentCreateView(CreateView):
     def get_success_url(self):
         # Redirect back to the post's detail view after a successful comment creation
         return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['post_id']})
+
+
+def search_posts(request):
+    query = request.GET.get('q', '')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.all()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+
+def posts_by_tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'blog/posts_by_tag.html', {'posts': posts, 'tag': tag})

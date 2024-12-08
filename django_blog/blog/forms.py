@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Profile
-from .models import Post
+from .models import Post, Tag
 from .models import Comment
 
 
@@ -17,9 +17,12 @@ class ProfileForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
+
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+    
     class Meta:
         model = Post
-        fields = ['title', 'content']
+        fields = ['title', 'content', 'tags']
 
 
 class CommentForm(forms.ModelForm):
