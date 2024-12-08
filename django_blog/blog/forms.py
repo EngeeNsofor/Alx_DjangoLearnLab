@@ -4,6 +4,7 @@ from .models import Profile
 from .models import Post
 from .models import Comment
 from taggit.forms import TagWidget
+from django.forms import widgets
 
 
 class UserForm(forms.ModelForm):
@@ -23,7 +24,16 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ['title', 'content', 'tags']
+        fields = ['title', 'content', 'tags', 'widgets']
+
+    content = forms.CharField(
+        widget=widgets.Textarea(attrs={'cols': 80, 'rows': 20, 'placeholder': 'Write your post content here...'}),
+        required=True
+    )
+    title = forms.CharField(
+        widget=widgets.TextInput(attrs={'placeholder': 'Enter the title of your post'}),
+        required=True
+    )
 
 
 class CommentForm(forms.ModelForm):
