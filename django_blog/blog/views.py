@@ -6,11 +6,12 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
 from .forms import UserForm, ProfileForm, CommentForm, PostForm
-from .models import Profile, Tag
+from .models import Profile
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Comment
 from django.db.models import Q
+from taggit.models import Tag
 
 
 # Create your views here.
@@ -193,5 +194,5 @@ def search_posts(request):
 
 def posts_by_tag(request, tag_name):
     tag = get_object_or_404(Tag, name=tag_name)
-    posts = tag.posts.all()
+    posts = Post.objects.filter(tags__name__in=[tag_name])
     return render(request, 'blog/posts_by_tag.html', {'posts': posts, 'tag': tag})
