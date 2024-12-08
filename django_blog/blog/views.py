@@ -172,4 +172,4 @@ class CommentCreateView(CreateView):
 
     def get_success_url(self):
         # Redirect back to the post's detail view after a successful comment creation
-        return reverse_lazy('post_detail', kwargs={'post_id': self.kwargs['post_id']})
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['post_id']})
