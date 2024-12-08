@@ -98,10 +98,14 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == post.author
 
 # Delete a post (only for the post author)
-class PostDeleteView(LoginRequiredMixin, DeleteView):
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
 
     def get_queryset(self):
         return Post.objects.filter(author=self.request.user)
+    
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
