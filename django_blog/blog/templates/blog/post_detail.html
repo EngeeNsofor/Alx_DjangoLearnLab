@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ post.title }}</h1>
+  <p>{{ post.content }}</p>
+  <p>Published on {{ post.published_date }}</p>
+  <p>Author: {{ post.author.username }}</p>
+  <a href="{% url 'post_update' pk=post.pk %}">Edit Post</a>
+  <a href="{% url 'post_delete' pk=post.pk %}">Delete Post</a>
+  <a href="{% url 'post_list' %}">Back to Posts</a>
+{% endblock %}

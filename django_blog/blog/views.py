@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm
 from .forms import UserForm, ProfileForm
 from .models import Profile
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .models import Post
 
 
 # Create your views here.
@@ -54,3 +57,47 @@ def profile_view(request):
         "blog/profile.html",
         {"user_form": user_form, "profile_form": profile_form},
     )
+
+
+# List all posts
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+# Show details of a single post
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
+    context_object_name = 'post'
+
+# Create a new post (authenticated users only)
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'blog/post_form.html'
+    success_url = reverse_lazy('post_list')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# Update a post (only for the post author)
+class PostUpdateView(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'blog/post_form.html'
+    context_object_name = 'post'
+    success_url = reverse_lazy('post_list')
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
+
+# Delete a post (only for the post author)
+class PostDeleteView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = 'blog/post_confirm_delete.html'
+    success_url = reverse_lazy('post_list')
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.request.user)
