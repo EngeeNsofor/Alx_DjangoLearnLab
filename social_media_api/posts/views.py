@@ -4,6 +4,9 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 # Create your views here.
@@ -40,3 +43,18 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer  # Define the serializer to use for Post model
     filter_backends = [DjangoFilterBackend]  # Enable filtering
     filterset_fields = ['title', 'content']  # Fields that can be filtered
+
+
+class FeedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        following_users = user.following.all()  # Get all users this user is following
+
+        # Retrieve posts from the followed users, ordered by the most recent first
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+        # Serialize the posts
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)

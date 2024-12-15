@@ -29,3 +29,56 @@ A **Django REST Framework**-based API for a social media platform. This project 
    ```bash
    git clone https://github.com/your-username/social_media_api.git
    cd social_media_api
+
+
+
+## Follow and Unfollow Users
+
+- **Follow User**
+    - **Endpoint:** `POST /api/accounts/follow/<user_id>/`
+    - **Description:** Allows the authenticated user to follow another user by their `user_id`.
+    - **Request Body:** None
+    - **Response Example:** 
+      ```json
+      {
+        "detail": "You are now following username."
+      }
+      ```
+
+- **Unfollow User**
+    - **Endpoint:** `POST /api/accounts/unfollow/<user_id>/`
+    - **Description:** Allows the authenticated user to unfollow another user by their `user_id`.
+    - **Request Body:** None
+    - **Response Example:** 
+      ```json
+      {
+        "detail": "You have unfollowed username."
+      }
+      ```
+
+
+## Feed
+
+- **View Feed**
+    - **Endpoint:** `GET /api/posts/feed/`
+    - **Description:** Retrieves the posts from users that the authenticated user follows, ordered by the most recent posts.
+    - **Response Example:** 
+      ```json
+      [
+        {
+          "id": 1,
+          "title": "Post Title",
+          "content": "This is a post content.",
+          "author": "username",
+          "created_at": "2024-12-15T12:00:00Z"
+        },
+        {
+          "id": 2,
+          "title": "Another Post Title",
+          "content": "This is another post content.",
+          "author": "another_username",
+          "created_at": "2024-12-14T10:30:00Z"
+        }
+      ]
+      ```
+
