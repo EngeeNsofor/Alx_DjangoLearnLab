@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8i+j&0gthmfdnfn+caamx*kroq2f=(99-i)8mz1dfdzlpn(35o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['your-domain.com', 'www.your-domain.com']
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'posts',
     'notifications',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -80,10 +82,15 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your-db-name',
+        'USER': 'your-db-user',
+        'PASSWORD': 'your-db-password',
+        'HOST': 'your-db-host',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
@@ -136,3 +143,21 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True  # Redirects HTTP to HTTPS if you have SSL
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://yourfrontend.com",
+]
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = 'your-region'
