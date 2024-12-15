@@ -21,7 +21,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8i+j&0gthmfdnfn+caamx*kroq2f=(99-i)8mz1dfdzlpn(35o'
+SECRET_KEY = os.environ.get('django-insecure-8i+j&0gthmfdnfn+caamx*kroq2f=(99-i)8mz1dfdzlpn(35o')
+# SECRET_KEY = 'django-insecure-8i+j&0gthmfdnfn+caamx*kroq2f=(99-i)8mz1dfdzlpn(35o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -161,3 +162,27 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = 'your-region'
+
+
+# Set this to the directory where you want static files to be collected in production.
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'error.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
