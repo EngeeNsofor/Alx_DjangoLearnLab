@@ -62,16 +62,94 @@ class FeedView(APIView):
         return Response(serializer.data)
 
 
+# class LikePostView(generics.GenericAPIView):
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def post(self, request, pk):
+#         post = get_object_or_404(Post, pk=pk)
+#         if Like.objects.filter(user=request.user, post=post).exists():
+#             return Response({"error": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+#         Like.objects.create(user=request.user, post=post)
+#         # Create a notification for the post owner
+#         if post.author != request.user:
+#             Notification.objects.create(
+#                 recipient=post.author,
+#                 actor=request.user,
+#                 verb="liked your post",
+#                 target=post
+#             )
+#         return Response({"success": "Post liked successfully."}, status=status.HTTP_200_OK)
+
+
+# class UnlikePostView(generics.GenericAPIView):
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def delete(self, request, pk):
+#         post = get_object_or_404(Post, pk=pk)
+#         like = Like.objects.filter(user=request.user, post=post).first()
+#         if not like:
+#             return Response({"error": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+#         like.delete()
+#         return Response({"success": "Post unliked successfully."}, status=status.HTTP_200_OK)
+    
+
+# class LikePostView(APIView):
+#     """
+#     Endpoint to allow a user to like a post.
+#     """
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, pk, *args, **kwargs):
+#         # Fetch the post using get_object_or_404
+#         post = get_object_or_404(Post, pk=pk)
+
+#         # Create or retrieve the like instance for the post and user
+#         like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+#         if created:
+#             return Response({'detail': 'Post liked successfully!'}, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response({'detail': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class UnlikePostView(APIView):
+#     """
+#     Endpoint to allow a user to unlike a post.
+#     """
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, pk, *args, **kwargs):
+#         # Fetch the post using get_object_or_404
+#         post = get_object_or_404(Post, pk=pk)
+
+#         try:
+#             # Attempt to retrieve and delete the like
+#             like = Like.objects.get(user=request.user, post=post)
+#             like.delete()
+#             return Response({'detail': 'Post unliked successfully!'}, status=status.HTTP_200_OK)
+#         except Like.DoesNotExist:
+#             return Response({'detail': 'You have not liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class LikePostView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    """
+    Endpoint to allow a user to like a post.
+    """
+    permission_classes = [IsAuthenticated]
 
-    def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        if Like.objects.filter(user=request.user, post=post).exists():
-            return Response({"error": "You already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, pk, *args, **kwargs):
+        # Fetch the post using get_object_or_404
+        post = generics.get_object_or_404(Post, pk=pk)
 
-        Like.objects.create(user=request.user, post=post)
-        # Create a notification for the post owner
+        # Create or retrieve the like instance
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if not created:
+            return Response({"error": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate a notification for the post owner (if it's not the same user)
         if post.author != request.user:
             Notification.objects.create(
                 recipient=post.author,
@@ -79,17 +157,25 @@ class LikePostView(generics.GenericAPIView):
                 verb="liked your post",
                 target=post
             )
-        return Response({"success": "Post liked successfully."}, status=status.HTTP_200_OK)
+
+        return Response({"success": "Post liked successfully."}, status=status.HTTP_201_CREATED)
 
 
 class UnlikePostView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    """
+    Endpoint to allow a user to unlike a post.
+    """
+    permission_classes = [IsAuthenticated]
 
-    def delete(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+    def post(self, request, pk, *args, **kwargs):
+        # Fetch the post using get_object_or_404
+        post = generics.get_object_or_404(Post, pk=pk)
+
+        # Attempt to find the like instance
         like = Like.objects.filter(user=request.user, post=post).first()
         if not like:
             return Response({"error": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Delete the like
         like.delete()
         return Response({"success": "Post unliked successfully."}, status=status.HTTP_200_OK)
