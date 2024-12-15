@@ -5,8 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from .models import CustomUser, User
-# from .serializers import RegisterSerializer, UserSerializer
+from .models import CustomUser
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 
 
@@ -39,7 +38,7 @@ class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
-        user_to_follow = User.objects.get(id=user_id)
+        user_to_follow = CustomUser.objects.get(id=user_id)
         user = request.user
 
         # Prevent a user from following themselves
@@ -54,7 +53,7 @@ class UnfollowUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user_id):
-        user_to_unfollow = User.objects.get(id=user_id)
+        user_to_unfollow = CustomUser.objects.get(id=user_id)
         user = request.user
 
         # Prevent a user from unfollowing themselves
